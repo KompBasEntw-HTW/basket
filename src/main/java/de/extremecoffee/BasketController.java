@@ -46,9 +46,18 @@ public class BasketController {
 
     for (var basketItem : basket.basketItems) {
       if (basketItem.item.equals(item)) {
+        if(quantity == 0){
+          basket.basketItems.remove(basketItem);
+          basketItem.delete();
+          return basket;
+        }
         basketItem.quantity = quantity;
         return basket;
       }
+    }
+
+    if(quantity == 0){
+      return basket;
     }
 
     BasketItem basketItem = new BasketItem();
