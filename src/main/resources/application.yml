@@ -1,0 +1,19 @@
+quarkus:
+  datasource: 
+    db-kind: postgresql
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    jdbc:
+      url: jdbc:postgresql://basketdb:5432/basket
+        
+  hibernate-orm:
+    database: 
+      generation: drop-and-create
+
+  package:
+    type: mutable-jar
+  live-reload: 
+    password: livereloadpassword 
+    url: http://localhost:8082
+  # redis:
+    # hosts: redit://cache:6379
