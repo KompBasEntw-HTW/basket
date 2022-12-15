@@ -1,19 +1,28 @@
 quarkus:
-  datasource: 
+  datasource:
     db-kind: postgresql
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
     jdbc:
       url: jdbc:postgresql://basketdb:5432/basket
-        
   hibernate-orm:
-    database: 
+    database:
       generation: drop-and-create
-
   package:
     type: mutable-jar
-  live-reload: 
-    password: livereloadpassword 
+  live-reload:
+    password: livereloadpassword
     url: http://localhost:8082
   # redis:
-    # hosts: redit://cache:6379
+  # hosts: redit://cache:6379
+rabbitmq-host: rabbitmq
+rabbitmq-port: 5672
+rabbitmq-username: ${RABBITMQ_DEFAULT_USER}
+rabbitmq-password: ${RABBITMQ_DEFAULT_PASS}
+mp:
+  messaging:
+    incoming:
+      stock:
+        connector: smallrye-rabbitmq
+        queue:
+          name: stock

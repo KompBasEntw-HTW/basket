@@ -1,18 +1,20 @@
 package de.extremecoffee;
 
-import java.util.UUID;
-
-import org.jboss.resteasy.reactive.RestQuery;
-
-import jakarta.transaction.Transactional;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
 import de.extremecoffee.basket.Basket;
 import de.extremecoffee.basket.BasketItem;
 import de.extremecoffee.basket.Item;
 import de.extremecoffee.basket.ItemId;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import java.util.UUID;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.jboss.resteasy.reactive.RestQuery;
 
 @Path("/basket")
 public class BasketController {
@@ -28,36 +30,41 @@ public class BasketController {
   @POST
   @Transactional
   @Path("/{basketId}/update")
-  public Basket update(ItemId itemId, @RestQuery Integer quantity, UUID basketId) {
+  @APIResponse(
+      responseCode = "200",
+      content =
+          @Content(
+              mediaType = MediaType.APPLICATION_JSON,
+              schema = @Schema(implementation = Basket.class)))
+  @APIResponse(responseCode = "404")
+  public Response update(ItemId itemId, @RestQuery Integer quantity, UUID basketId) {
     Basket basket = Basket.findById(basketId);
     Item item = Item.findById(itemId);
 
     if (basket == null) {
-      throw new NotFoundException();
+      return Response.status(404)
+          .entity("{\"message\": \"Basket with id " + basketId + " not found\"}")
+          .build();
     }
 
     if (item == null) {
-      // TODO throw not found exception syncronize with products service
-      item = new Item();
-      item.productId = itemId.productId;
-      item.bagSizeId = itemId.bagSizeId;
-      item.persist();
+      return Response.status(404).entity("{\"message\":\"Item does not exist\"}").build();
     }
 
     for (var basketItem : basket.basketItems) {
       if (basketItem.item.equals(item)) {
-        if(quantity == 0){
+        if (quantity == 0) {
           basket.basketItems.remove(basketItem);
           basketItem.delete();
-          return basket;
+          return Response.ok(basket).entity(basket).build();
         }
         basketItem.quantity = quantity;
-        return basket;
+        return Response.ok(basket).build();
       }
     }
 
-    if(quantity == 0){
-      return basket;
+    if (quantity == 0) {
+      return Response.ok(basket).build();
     }
 
     BasketItem basketItem = new BasketItem();
@@ -66,7 +73,7 @@ public class BasketController {
     basketItem.basket = basket;
     basketItem.persist();
     basket.basketItems.add(basketItem);
-    return basket;
+    return Response.ok(basket).build();
   }
 
   @GET
