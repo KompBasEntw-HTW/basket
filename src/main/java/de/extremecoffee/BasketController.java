@@ -1,10 +1,9 @@
 package de.extremecoffee;
 
 import de.extremecoffee.basket.Basket;
-import de.extremecoffee.basket.BasketItem;
-import de.extremecoffee.basket.Item;
 import de.extremecoffee.basket.ItemId;
-import jakarta.transaction.Transactional;
+import io.quarkus.logging.Log;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -18,62 +17,40 @@ import org.jboss.resteasy.reactive.RestQuery;
 
 @Path("/basket")
 public class BasketController {
+  @Inject BasketService basketService;
+
   @POST
-  @Transactional
   @Path("/createEphemeral")
+  @APIResponse(
+      responseCode = "200",
+      description = "Create Basket and returns its UUID",
+      content =
+          @Content(mediaType = MediaType.TEXT_PLAIN, schema = @Schema(implementation = UUID.class)))
   public UUID createEphemeral() {
-    var basket = new Basket();
-    basket.persist();
-    return basket.id;
+    var basketId = basketService.createNewBasket();
+    Log.debugf("Create basket with id %s", basketId.toString());
+    return basketId;
   }
 
   @POST
-  @Transactional
   @Path("/{basketId}/update")
   @APIResponse(
       responseCode = "200",
+      description = "Updates specified basket with specified item and quantity, removes item when qauntity is 0",
       content =
           @Content(
               mediaType = MediaType.APPLICATION_JSON,
               schema = @Schema(implementation = Basket.class)))
-  @APIResponse(responseCode = "404")
+  @APIResponse(responseCode = "404", description = "Either item or basket not found")
   public Response update(ItemId itemId, @RestQuery Integer quantity, UUID basketId) {
-    Basket basket = Basket.findById(basketId);
-    Item item = Item.findById(itemId);
+    Basket updatedBasket = basketService.updateItemInBasket(basketId, quantity, itemId);
 
-    if (basket == null) {
+    if (updatedBasket == null) {
       return Response.status(404)
-          .entity("{\"message\": \"Basket with id " + basketId + " not found\"}")
+          .entity("{\"message\": \"Basket with id " + basketId + " not found or item not found\"}")
           .build();
     }
-
-    if (item == null) {
-      return Response.status(404).entity("{\"message\":\"Item does not exist\"}").build();
-    }
-
-    for (var basketItem : basket.basketItems) {
-      if (basketItem.item.equals(item)) {
-        if (quantity == 0) {
-          basket.basketItems.remove(basketItem);
-          basketItem.delete();
-          return Response.ok(basket).entity(basket).build();
-        }
-        basketItem.quantity = quantity;
-        return Response.ok(basket).build();
-      }
-    }
-
-    if (quantity == 0) {
-      return Response.ok(basket).build();
-    }
-
-    BasketItem basketItem = new BasketItem();
-    basketItem.quantity = quantity;
-    basketItem.item = item;
-    basketItem.basket = basket;
-    basketItem.persist();
-    basket.basketItems.add(basketItem);
-    return Response.ok(basket).build();
+    return Response.ok(updatedBasket).build();
   }
 
   @GET

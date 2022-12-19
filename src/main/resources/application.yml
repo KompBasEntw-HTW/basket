@@ -24,5 +24,6 @@ mp:
     incoming:
       stock:
         connector: smallrye-rabbitmq
+        auto-acknowledgement: true
         queue:
           name: stock
