@@ -8,10 +8,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import java.util.List;
 
-@Transactional
 @ApplicationScoped
 public class BasketService {
 
+  @Transactional
   Basket updateItemInBasket(String userName, List<ItemDto> itemDtoList) {
     Basket basket = Basket.find("userName", userName).firstResult();
     if (basket == null) {
@@ -66,6 +66,7 @@ public class BasketService {
     return Basket.find("userName", userName).firstResult();
   }
 
+  @Transactional
   Basket deleteItemFromBasket(String userName, ItemId itemId) {
     Basket basket = Basket.find("userName", userName).firstResult();
     Item item = Item.findById(itemId);
