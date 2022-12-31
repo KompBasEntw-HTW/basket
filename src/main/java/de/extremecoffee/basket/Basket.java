@@ -3,6 +3,7 @@ package de.extremecoffee.basket;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -25,6 +26,6 @@ public class Basket extends PanacheEntityBase {
 
   @UpdateTimestamp public ZonedDateTime updateDate;
 
-  @OneToMany(mappedBy = "basket")
+  @OneToMany(mappedBy = "basket", fetch = FetchType.EAGER)
   public Set<BasketItem> basketItems = new HashSet<BasketItem>();
 }
