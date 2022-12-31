@@ -21,7 +21,7 @@ public class Basket extends PanacheEntityBase {
   @Schema(readOnly = true)
   public UUID id;
 
-  public UUID userId;
+  public String userName;
 
   @UpdateTimestamp public ZonedDateTime updateDate;
 

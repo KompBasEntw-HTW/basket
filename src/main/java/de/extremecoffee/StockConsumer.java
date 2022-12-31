@@ -15,7 +15,7 @@ public class StockConsumer {
   @Blocking
   @Transactional
   public void consume(JsonObject p) {
-    StockDto stockDto = p.mapTo(StockDto.class);
+    ItemDto stockDto = p.mapTo(ItemDto.class);
 
     ItemId itemId = new ItemId();
     itemId.bagSizeId = stockDto.bagSizeId();
