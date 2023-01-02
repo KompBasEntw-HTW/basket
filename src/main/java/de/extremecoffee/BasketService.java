@@ -13,7 +13,7 @@ public class BasketService {
 
   @Transactional
   Basket updateItemInBasket(String userName, List<ItemDto> itemDtoList) {
-    Basket basket = Basket.find("userName", userName).firstResult();
+    Basket basket = Basket.findByUserName(userName);
     if (basket == null) {
       basket = new Basket();
       basket.userName = userName;
@@ -63,12 +63,12 @@ public class BasketService {
   }
 
   Basket getBasket(String userName) {
-    return Basket.find("userName", userName).firstResult();
+    return Basket.findByUserName(userName);
   }
 
   @Transactional
   Basket deleteItemFromBasket(String userName, ItemId itemId) {
-    Basket basket = Basket.find("userName", userName).firstResult();
+    Basket basket = Basket.findByUserName(userName);
     Item item = Item.findById(itemId);
 
     if (item == null) {
