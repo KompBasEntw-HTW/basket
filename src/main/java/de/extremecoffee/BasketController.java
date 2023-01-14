@@ -12,7 +12,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -24,7 +23,6 @@ import org.jboss.resteasy.reactive.NoCache;
 @Authenticated
 public class BasketController {
   @Inject BasketService basketService;
-  @Inject JsonWebToken jwt;
   @Inject SecurityIdentity identity;
 
   @POST
