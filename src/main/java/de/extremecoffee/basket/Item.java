@@ -8,9 +8,11 @@ import jakarta.persistence.IdClass;
 @Entity
 @IdClass(ItemId.class)
 public class Item extends PanacheEntityBase {
-  @Id public Long bagSizeId;
+  @Id
+  public Long bagSizeId;
 
-  @Id public Long productId;
+  @Id
+  public Long productId;
 
   public Integer quantityInStock;
 

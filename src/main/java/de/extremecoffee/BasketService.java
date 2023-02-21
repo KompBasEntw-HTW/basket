@@ -6,6 +6,7 @@ import de.extremecoffee.basket.Item;
 import de.extremecoffee.basket.ItemId;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+
 import java.util.List;
 
 @ApplicationScoped
@@ -38,7 +39,7 @@ public class BasketService {
       Item item = Item.findById(itemId);
 
       var basketItemsInBasket =
-          basket.basketItems.stream().filter(basketItem -> basketItem.item.equals(item)).toList();
+              basket.basketItems.stream().filter(basketItem -> basketItem.item.equals(item)).toList();
 
       if (!basketItemsInBasket.isEmpty() && itemDto.quantity() == 0) {
         var basketItem = basketItemsInBasket.get(0);
@@ -76,7 +77,7 @@ public class BasketService {
     }
 
     var basketItemsInBasket =
-        basket.basketItems.stream().filter(basketItem -> basketItem.item.equals(item)).toList();
+            basket.basketItems.stream().filter(basketItem -> basketItem.item.equals(item)).toList();
     if (!basketItemsInBasket.isEmpty()) {
       var basketItem = basketItemsInBasket.get(0);
       basket.basketItems.remove(basketItem);
