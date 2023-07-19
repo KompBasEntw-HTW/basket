@@ -10,7 +10,7 @@ public class ItemId implements Serializable {
   @Override
   public boolean equals(Object o) {
     Item item = (Item) o;
-    if (bagSizeId == this.bagSizeId && productId == this.productId) {
+    if (item.bagSizeId == bagSizeId && item.productId == productId) {
       return true;
     }
     return false;
